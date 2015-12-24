@@ -70,6 +70,9 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+    def __unicode__(self):
+        return "{} : {}".format(self.id, self.email)
+
 class Connection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     access_token = db.Column(db.String)
@@ -105,7 +108,7 @@ class ConnectionAdmin(sqla.ModelView):
                     'provider_id',
                     'provider_user_id',
                     'secret',
-                    'user_id']
+                    'user']
 
 # Create admin
 admin = admin.Admin(app, name='Example: SQLAlchemy2', template_mode='bootstrap3')
