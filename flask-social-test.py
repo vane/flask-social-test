@@ -14,7 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 # MAIL
 from flask_mail import Mail
 
-#SECURITY
+# SECURITY
 from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, \
     login_required, login_user
 
@@ -27,6 +27,7 @@ from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 # ADMIN
 from flask_admin.contrib import sqla
 import flask_admin as admin
+
 
 def init_logging(directory):
     # check log directory exists
@@ -56,10 +57,12 @@ roles_users = db.Table('roles_users',
                        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
                        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
+
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String, unique=True)
     description = db.Column(db.String)
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,6 +75,7 @@ class User(db.Model, UserMixin):
 
     def __unicode__(self):
         return "{} : {}".format(self.id, self.email)
+
 
 class Connection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -96,6 +100,7 @@ class RoleAdmin(sqla.ModelView):
 class UserAdmin(sqla.ModelView):
     column_display_pk = True
     form_columns = ['id', 'email', 'password', 'active', 'confirmed_at', 'roles']
+
 
 class ConnectionAdmin(sqla.ModelView):
     column_display_pk = True
@@ -125,53 +130,66 @@ social = Social(app, social_ds)
 app.security = security
 app.social = social
 
+
 # Create tables at first request
 @app.before_first_request
 def create_user():
     db.create_all()
+
 
 # Register when no such user - supports twitter / facebook
 @login_failed.connect_via(app)
 def on_login_failed(sender, provider, oauth_response):
     connection_values = get_connection_values_from_oauth_response(provider, oauth_response)
     provider_id = connection_values.get('provider_id')
+    ds = security.datastore
     if provider_id is 'facebook':
-        import facebook
-        api = facebook.GraphAPI(access_token=oauth_response.get('access_token'))
-        user_data = api.get_object(connection_values.get('provider_user_id'))
-        ds = security.datastore
-        user = ds.create_user(
-            email=user_data.get('email'),
-            active=True,
-            confirmed_at=datetime.now()
-        )
-        ds.commit()
-        connection_values['user_id'] = user.id
-        connect_handler(connection_values, provider)
-        if login_user(user):
-            ds.commit()
-            return render_template('index.html')
+        user = facebook_oauth_register(ds, connection_values, provider, oauth_response)
+        return _login_after_register(ds, user)
     elif provider_id is 'twitter':
-        import twitter
-        api = twitter.Api(consumer_key=provider.consumer_key,
-                          consumer_secret=provider.consumer_secret,
-                          access_token_key=connection_values.get('access_token'),
-                          access_token_secret=connection_values.get('secret'))
-        data = api.VerifyCredentials()
-        ds = security.datastore
-        twitter_display  = connection_values.get('display_name')
-        user = ds.create_user(
-            email='twitter{}'.format(twitter_display),
-            active=True,
-            confirmed_at=datetime.now()
-        )
-        ds.commit()
-        connection_values['user_id'] = user.id
-        connect_handler(connection_values, provider)
-        if login_user(user):
-            ds.commit()
-            return redirect(url_for('index'))
+        user = twitter_oauth_register(ds, connection_values, provider)
+        return _login_after_register(ds, user)
     return redirect(url_for('login'))
+
+
+def twitter_oauth_register(ds, connection_values, provider):
+    import twitter
+    api = twitter.Api(consumer_key=provider.consumer_key,
+                      consumer_secret=provider.consumer_secret,
+                      access_token_key=connection_values.get('access_token'),
+                      access_token_secret=connection_values.get('secret'))
+    data = api.VerifyCredentials()
+    twitter_display = connection_values.get('display_name')
+    user = ds.create_user(
+        email='twitter{}'.format(twitter_display),
+        active=True,
+        confirmed_at=datetime.now()
+    )
+    ds.commit()
+    connection_values['user_id'] = user.id
+    connect_handler(connection_values, provider)
+    return user
+
+
+def facebook_oauth_register(ds, connection_values, provider, oauth_response):
+    import facebook
+    api = facebook.GraphAPI(access_token=oauth_response.get('access_token'))
+    user_data = api.get_object(connection_values.get('provider_user_id'))
+    user = ds.create_user(
+        email=user_data.get('email'),
+        active=True,
+        confirmed_at=datetime.now()
+    )
+    ds.commit()
+    connection_values['user_id'] = user.id
+    connect_handler(connection_values, provider)
+    return user
+
+
+def _login_after_register(ds, user):
+    if login_user(user):
+        ds.commit()
+        return redirect(url_for('index'))
 
 
 @app.route('/')
@@ -179,10 +197,6 @@ def on_login_failed(sender, provider, oauth_response):
 def index():
     return render_template('index.html')
 
-@app.route('/test')
-@login_required
-def test():
-    render_template('test.html')
 
 @app.route('/profile')
 @login_required
@@ -192,6 +206,7 @@ def profile():
         content='Profile Page',
         facebook_conn=social.facebook.get_connection()
     )
+
 
 if __name__ == '__main__':
     init_logging('logs')
