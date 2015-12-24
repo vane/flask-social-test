@@ -1,0 +1,14 @@
+# Intelij
+.idea
+*.iml
+static/ext
+# SQLite
+*.db
+#
+*.pyc
+
+logs/
+config.py
+
+
+.DS_Store

@@ -1,0 +1,31 @@
+[
+  {
+    "name":"jquery",
+    "src":
+    {
+      "version":"1.11.3",
+      "url":"https://cdnjs.cloudflare.com/ajax/libs/jquery/",
+      "files":[
+        "jquery.js"
+      ]
+    }
+  },
+  {
+    "name":"bootstrap",
+    "src":
+      {
+        "version":"3.3.4",
+        "url":"https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap",
+        "files":[
+          "css/bootstrap.css",
+          "fonts/glyphicons-halflings-regular.eot",
+          "fonts/glyphicons-halflings-regular.svg",
+          "fonts/glyphicons-halflings-regular.ttf",
+          "fonts/glyphicons-halflings-regular.woff",
+          "fonts/glyphicons-halflings-regular.woff2",
+          "js/bootstrap.js",
+          "css/bootstrap.css.map"
+        ]
+      }
+  }
+]

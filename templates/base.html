@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/ext/bootstrap/3.3.4/css/bootstrap.css">
+    <title>Test - {% block title %}{% endblock %}</title>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <div class="container-fluid">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script type="text/javascript" src="/static/ext/jquery/1.11.3/jquery.js"></script>
+    <script type="text/javascript" src="/static/ext/bootstrap/3.3.4/js/bootstrap.js"></script>
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

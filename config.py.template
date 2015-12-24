@@ -1,0 +1,34 @@
+
+DEBUG = True
+SECRET_KEY = 'siema'
+
+# SQLALCHEMY
+SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+SQLALCHEMY_ECHO = True
+
+# SOCIAL
+SOCIAL_FACEBOOK = {
+    'consumer_key': '',
+    'consumer_secret': '',
+    'request_token_params': {
+        'scope': 'email,public_profile,user_friends'
+    }
+}
+SOCIAL_TWITTER = {
+    'consumer_key': '',
+    'consumer_secret': '',
+}
+
+# SECURITY
+SECURITY_POST_LOGIN = '/profile'
+SECURITY_PASSWORD_SALT = 'siema'
+SECURITY_PASSWORD_HASH = 'sha512_crypt'
+SECURITY_REGISTERABLE = True
+SECURITY_REGISTER_URL = '/register'
+
+# MAIL
+MAIL_SERVER = ''
+MAIL_PORT = 465
+MAIL_USE_SSL = True
+MAIL_USERNAME = ''
+MAIL_PASSWORD = ''
