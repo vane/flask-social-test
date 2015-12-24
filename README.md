@@ -1,22 +1,33 @@
 #Login using flask-social example
 
 Using sqlite database for simplicity<br />
+Included flask-admin to see database structure<br />
 all files are in flask-social-test.py file<br />
-provides auto registration code with facebook/twitter when no user or password found<br />
+provides auto registration code with facebook/twitter<br />
 
 ###Connected providers
 1. facebook
-> pip install http://github.com/pythonforfacebook/facebook-sdk/tarball/master
+<br />
+```
+pip install http://github.com/pythonforfacebook/facebook-sdk/tarball/master
+```
 2. twitter
-> pip install python-twitter
+<br />
+```
+pip install python-twitter
+```
 
 ### Setup
 1. copy/move config.py.template as config.py
 2. fill SOCIAL_FACEBOOK, SOCIAL_TWITTER with api keys
-3. run 
-> python flask-social-test.py
-4. go to [http://localhost:5000/](http://localhost:5000/)
-5. all files are in flask-social-test.py
+
+### Run
+1. commandline type:
+<br />
+```
+python flask-social-test.py
+```
+2. go to [http://localhost:5000/](http://localhost:5000/)
 
 ###to use twitter:
 1. go to [https://apps.twitter.com/](https://apps.twitter.com/)
@@ -35,4 +46,4 @@ provides auto registration code with facebook/twitter when no user or password f
 #### Troubleshoting
 1. don't go to 127.0.0.1:5000 cause facebook won't authorize you
 2. don't bother messages look at [http://localhost:5000/admin/connection/](http://localhost:5000/admin/connection/) 
-to check everything is ok   
+to check everything is ok  
