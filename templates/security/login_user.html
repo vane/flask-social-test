@@ -1,21 +1,37 @@
-{% from "security/_macros.html" import render_field_with_errors, render_field %}
-{% include "security/_messages.html" %}
-<h1>Login</h1>
-<form class="form-control" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-    {{ login_user_form.hidden_tag() }}
-    {{ render_field_with_errors(login_user_form.email) }}
-    {{ render_field_with_errors(login_user_form.password) }}
-    {{ render_field_with_errors(login_user_form.remember) }}
-    {{ render_field(login_user_form.next) }}
-    {{ render_field(login_user_form.submit) }}
-</form>
-{% include "security/_menu.html" %}
+{% extends 'base.html' %}
+{% block content %}
 
-{% macro social_login(provider_id, display_name) %}
-<form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
-    <input type="submit" value="Login with {{ display_name }}" />
-</form>
-{% endmacro %}
+    <div class="row">
+        {% from "security/_macros.html" import render_field_with_errors, render_field %}
+        {% include "security/_messages.html" %}
+    </div>
+    <div class="row">
+        <!--
+        <div class="col-md-3">
+            {% include "security/_menu.html" %}
+        </div>
 
-{{ social_login('facebook', 'Facebook' )}}
-{{ social_login('twitter', 'Twitter' )}}
+        <div class="col-md-3">
+            <h1>Login</h1>
+            <form class="form" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+                {{ login_user_form.hidden_tag() }}
+                {{ render_field_with_errors(login_user_form.email, class="form-control") }}
+                {{ render_field_with_errors(login_user_form.password, class="form-control") }}
+                {{ render_field_with_errors(login_user_form.remember, class="form-control") }}
+                {{ render_field(login_user_form.next, class="form-control") }}
+                {{ render_field(login_user_form.submit, class="btn btn-success") }}
+            </form>
+        </div>-->
+        <div class="col-md-3" style="margin-top: 100px;">
+            {% macro social_login(provider_id, display_name) %}
+            <form class="form" action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
+                <input class="btn btn-info" style="margin: 10px;"
+                       type="submit" value="Login with {{ display_name }}" />
+            </form>
+            {% endmacro %}
+
+            {{ social_login('facebook', 'Facebook')}}
+            {{ social_login('twitter', 'Twitter' )}}
+        </div>
+    </div>
+{% endblock %}
